@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <meta charset="utf-8">
+    <title>Wedding Form</title>
+  </head>
+  <body>
+    <form action="{{ url_for('checkin') }}" method="post">
+
+        <div class="form-group row">
+            <label for="userid" class="col-sm-2 col-form-label">User ID:</label>
+            <div class="col-sm-10">
+              <input type="text" readonly class="form-control-plaintext" id="userid" value={{ id }} name="userid">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="firstname" class="col-sm-2 col-form-label">First Name:</label>
+            <div class="col-sm-10">
+              <input type="text" readonly class="form-control-plaintext" id="firstname" value={{ firstname }}>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="lastname" class="col-sm-2 col-form-label">Last Name</label>
+            <div class="col-sm-10">
+              <input type="text" readonly class="form-control-plaintext" id="lastname" value={{ lastname }}>
+            </div>
+        </div>
+
+        <div class="form-group col-md-4">
+            <label for="status">Attendendance</label>
+            <select id="status" class="form-control" name='status'>
+              <option>Attending</option>
+              <option>Not Attending</option>
+            </select>
+          </div>
+
+        <div class="form-group col-md-4">
+            <label for="entree">Entree Selection</label>
+            <select id="entree" class="form-control" name='entree'>
+              <option>Chicken</option>
+              <option>Steak</option>
+            </select>
+          </div>
+
+        <input type="submit" value="Submit">
+    </form>
+
+  </body>
+</html>
