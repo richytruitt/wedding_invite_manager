@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <meta charset="utf-8">
+    <title>Atendees</title>
+  </head>
+  <body>
+    <h1>Who's attending</h1>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">First</th>
+                <th scope="col">Last</th>
+                <th scope="col">Status</th>
+            </tr>
+        </thead>
+        {% for users in userlist %}
+            <tbody>
+            <tr>
+                <td class="user_id">{{users.user_id}}</td>
+                <td class="f_name">{{users.first_name}}</td>
+                <td class="l_name"><SPAN>{{users.last_name}}</SPAN></td>
+                <td class="status"><SPAN>{{users.status}}</SPAN></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+  </body>
+</html>

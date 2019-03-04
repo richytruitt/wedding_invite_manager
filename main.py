@@ -1,22 +1,41 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, redirect
 import psycopg2
 import pyqrcode
 import configparser
 
 app = Flask(__name__)
 
-# @app.route("/")
-# def index():
-#     return render_template("index.html")
 config = configparser.ConfigParser()
 config.read('config/dbconfig.ini')
 
+@app.route('/')
+def index():
+
+    users_list = []
+    try:
+        conn = psycopg2.connect(dbname=str(config['dbcreds']['dbname']), user=str(config['dbcreds']['username']), host=str(config['dbcreds']['dbhost']), password=str(config['dbcreds']['password']))
+        print("connected")
+    except:
+        print("Cannot connect to the DB")
+    
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("SELECT * FROM invites where status = 'Attending';")
+    except:
+        print("Database query failed")
+    
+    _all = cursor.fetchall()
+    for i in _all:
+        each_item = dict(user_id = i[0], first_name = i[1], last_name = i[2], status = i[3])
+        users_list.append(each_item)
+
+    return render_template("attending.html", userlist=users_list)
 
 @app.route("/<userID>")
-# Needs to return a template for the webform
 def rsvp(userID):
     try:
-        conn = psycopg2.connect(dbname=str(config['dbcreds']['dbname']), user=str(config['dbcreds']['username']), host=str(config['dbcreds']['host']), password=str(config['dbcreds']['password']))
+        conn = psycopg2.connect(dbname=str(config['dbcreds']['dbname']), user=str(config['dbcreds']['username']), host=str(config['dbcreds']['dbhost']), password=str(config['dbcreds']['password']))
         print("connected")
     except:
         print("Cannot connect to the DB")
@@ -40,7 +59,7 @@ def rsvp(userID):
 @app.route("/generate_codes")
 def codes():
     try:
-        conn = psycopg2.connect(dbname=str(config['dbcreds']['dbname']), user=str(config['dbcreds']['username']), host=str(config['dbcreds']['host']), password=str(config['dbcreds']['password']))
+        conn = psycopg2.connect(dbname=str(config['dbcreds']['dbname']), user=str(config['dbcreds']['username']), host=str(config['dbcreds']['dbhost']), password=str(config['dbcreds']['password']))
         print("connected")
     except:
         print("Cannot connect to the DB")
@@ -54,8 +73,8 @@ def codes():
     users = cursor.fetchall()
     for row in users:
         print(row[0])
-        # code = pyqrcode.create("http://{}:5555/{}".format(config['dbcreds']['host'], row[0]))
-        code = pyqrcode.create("http://{}:5555/{}".format('192.168.195.89', row[0]))
+        # code = pyqrcode.create("http://{}:5555/{}".format(config['dbcreds']['webhost'], row[0]))
+        code = pyqrcode.create("http://{}:80/{}".format(config['dbcreds']['webhost'], row[0]))
         code.png('labels/{}.png'.format(row[1]+" "+row[2]), scale=5)
 
     return "test"
@@ -69,7 +88,7 @@ def checkin():
     entree = request.form['entree']
 
     try:
-        conn = psycopg2.connect(dbname=str(config['dbcreds']['dbname']), user=str(config['dbcreds']['username']), host=str(config['dbcreds']['host']), password=str(config['dbcreds']['password']))
+        conn = psycopg2.connect(dbname=str(config['dbcreds']['dbname']), user=str(config['dbcreds']['username']), host=str(config['dbcreds']['dbhost']), password=str(config['dbcreds']['password']))
         print("connected")
     except:
         print("Cannot connect to the DB")
@@ -83,7 +102,7 @@ def checkin():
     except:
         print("Database is unable to be updated")
     
-    return "thank you for registering"
+    return redirect("localhost:80/", code=302)
 
 
 
